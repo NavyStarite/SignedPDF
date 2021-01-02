@@ -65,7 +65,7 @@ public class MetodosLLaves {
         firma = Signature.getInstance("SHA1WithRSA");
     }
     
-    public void FirmarDato (byte[] dato) throws NoSuchAlgorithmException, SignatureException{
+    public byte[] FirmarDato (byte[] dato) throws NoSuchAlgorithmException, SignatureException{
         try {
             //inicilizamos
             firma.initSign(llaves.getPrivate());
@@ -83,11 +83,10 @@ public class MetodosLLaves {
         
         //para poder visualizar la firma
         System.out.println("Firma: " + new BASE64Encoder().encode(firmabytes));
-        /*
-        
-*/
+        return firmabytes;
     }
-    public void Verificar(byte[] dato, byte[] firmabytes) throws SignatureException{
+    public boolean Verificar(byte[] dato, byte[] firmabytes) throws SignatureException{
+        boolean verificado = false;
         try {
             //el paso para verificarla
             firma.initVerify(llaves.getPublic());
@@ -96,11 +95,13 @@ public class MetodosLLaves {
             firma.update(dato);
             
             //verifico
+            verificado = firma.verify(firmabytes);
             System.out.println(firma.verify(firmabytes));
         } catch (InvalidKeyException ex) {
             Logger.getLogger(MetodosLLaves.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Archivo Invalido Invalida", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        return verificado;
     }
     
 }
