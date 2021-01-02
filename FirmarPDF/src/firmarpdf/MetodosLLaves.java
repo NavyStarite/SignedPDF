@@ -42,6 +42,9 @@ package firmarpdf;
 
  */
 import java.security.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import sun.misc.BASE64Encoder;
 /**
  *
@@ -50,6 +53,7 @@ import sun.misc.BASE64Encoder;
 public class MetodosLLaves {
     private KeyPairGenerator generador;
     private KeyPair llaves;
+    Signature firma;
     public MetodosLLaves () throws NoSuchAlgorithmException{
         //generador de la inscia del rsa
         generador = KeyPairGenerator.getInstance("RSA");
@@ -57,6 +61,46 @@ public class MetodosLLaves {
         generador.initialize(2048);
         ////creamos las llaves
         llaves = generador.genKeyPair();
+        
+        firma = Signature.getInstance("SHA1WithRSA");
+    }
+    
+    public void FirmarDato (byte[] dato) throws NoSuchAlgorithmException, SignatureException{
+        try {
+            //inicilizamos
+            firma.initSign(llaves.getPrivate());
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(MetodosLLaves.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Firma Invalida", "Error", JOptionPane.ERROR_MESSAGE);
+            
+        }
+        
+        firma.update(dato);
+        
+        //firmalo
+        byte[] firmabytes = firma.sign();
+        
+        //para poder visualizar la firma
+        System.out.println("Firma: " + new BASE64Encoder().encode(firmabytes));
+        /*
+        
+*/
+    }
+    public void Verificar(byte[] dato, byte[] firmabytes) throws SignatureException{
+        try {
+            //el paso para verificarla
+            firma.initVerify(llaves.getPublic());
+            
+            //volvemos a actualizar el documento
+            firma.update(dato);
+            
+            //verifico
+            System.out.println(firma.verify(firmabytes));
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(MetodosLLaves.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Archivo Invalido Invalida", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
 }
