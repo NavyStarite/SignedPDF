@@ -85,7 +85,6 @@ public class Generar extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(514, 400));
-        setPreferredSize(new java.awt.Dimension(514, 400));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.Y_AXIS));
 
         jPanel1.setPreferredSize(new java.awt.Dimension(514, 75));
@@ -109,7 +108,9 @@ public class Generar extends javax.swing.JFrame {
         jLabel3.setText("Nombre");
         jPanel4.add(jLabel3);
 
-        jTextField1.setText("jTextField1");
+        jTextField1.setMinimumSize(new java.awt.Dimension(200, 20));
+        jTextField1.setName(""); // NOI18N
+        jTextField1.setPreferredSize(new java.awt.Dimension(200, 20));
         jPanel4.add(jTextField1);
 
         jPanel3.add(jPanel4);
@@ -117,7 +118,8 @@ public class Generar extends javax.swing.JFrame {
         jLabel4.setText("Edad");
         jPanel5.add(jLabel4);
 
-        jTextField2.setText("jTextField2");
+        jTextField2.setMinimumSize(new java.awt.Dimension(200, 20));
+        jTextField2.setPreferredSize(new java.awt.Dimension(200, 20));
         jPanel5.add(jTextField2);
 
         jPanel3.add(jPanel5);
@@ -125,7 +127,8 @@ public class Generar extends javax.swing.JFrame {
         jLabel5.setText("Mensaje");
         jPanel6.add(jLabel5);
 
-        jTextField3.setText("jTextField3");
+        jTextField3.setMinimumSize(new java.awt.Dimension(200, 20));
+        jTextField3.setPreferredSize(new java.awt.Dimension(200, 20));
         jPanel6.add(jTextField3);
 
         jPanel3.add(jPanel6);
@@ -133,7 +136,8 @@ public class Generar extends javax.swing.JFrame {
         jLabel6.setText("Firma");
         jPanel7.add(jLabel6);
 
-        jTextField4.setText("jTextField4");
+        jTextField4.setMinimumSize(new java.awt.Dimension(200, 20));
+        jTextField4.setPreferredSize(new java.awt.Dimension(200, 20));
         jPanel7.add(jTextField4);
 
         jPanel3.add(jPanel7);
