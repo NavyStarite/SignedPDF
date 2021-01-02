@@ -59,7 +59,7 @@ import sun.misc.BASE64Encoder;
 public class MetodosLLaves {
     private KeyPairGenerator generador;
     private KeyPair llaves;
-    Signature firma;
+    private Signature firma;
     public MetodosLLaves () throws NoSuchAlgorithmException{
         //generador de la inscia del rsa
         generador = KeyPairGenerator.getInstance("RSA");
