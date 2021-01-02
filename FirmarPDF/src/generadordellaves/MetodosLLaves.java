@@ -1,4 +1,4 @@
-package firmarpdf;
+package generadordellaves;
 
 
 
@@ -43,6 +43,10 @@ package firmarpdf;
  *                      "?????????????????????????????????????????
 
  */
+import firmarpdf.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,47 +67,18 @@ public class MetodosLLaves {
         generador.initialize(2048);
         ////creamos las llaves
         llaves = generador.genKeyPair();
-        
-        firma = Signature.getInstance("SHA1WithRSA");
     }
-    
-    public byte[] FirmarDato (byte[] dato) throws NoSuchAlgorithmException, SignatureException{
-        try {
-            //inicilizamos
-            firma.initSign(llaves.getPrivate());
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(MetodosLLaves.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Firma Invalida", "Error", JOptionPane.ERROR_MESSAGE);
-            
-        }
-        
-        firma.update(dato);
-        
-        //firmalo
-        byte[] firmabytes = firma.sign();
-        
-        //para poder visualizar la firma
-        System.out.println("Firma: " + new BASE64Encoder().encode(firmabytes));
-        return firmabytes;
+    public void guardarLlavePublica () throws FileNotFoundException, IOException {
+        byte[] key = llaves.getPublic().getEncoded();
+        FileOutputStream keyfos = new FileOutputStream("publicKey.key");
+        keyfos.write(key);
+        keyfos.close();
     }
-    public boolean Verificar(byte[] dato, byte[] firmabytes) throws SignatureException{
-        boolean verificado = false;
-        try {
-            //el paso para verificarla
-            firma.initVerify(llaves.getPublic());
-            
-            //volvemos a actualizar el documento
-            firma.update(dato);
-            
-            //verifico
-            verificado = firma.verify(firmabytes);
-            System.out.println(firma.verify(firmabytes));
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(MetodosLLaves.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Archivo Invalido Invalida", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        return verificado;
+    public void guardarLlavePrivada () throws FileNotFoundException, IOException {
+        byte[] key = llaves.getPrivate().getEncoded();
+        FileOutputStream keyfos = new FileOutputStream("privateKey.key");
+        keyfos.write(key);
+        keyfos.close();
     }
     
 }
