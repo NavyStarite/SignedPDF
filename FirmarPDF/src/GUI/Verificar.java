@@ -87,6 +87,8 @@ public class Verificar extends javax.swing.JFrame {
         jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
 
         jTextField2.setText("jTextField2");
+        jTextField2.setMinimumSize(new java.awt.Dimension(200, 20));
+        jTextField2.setPreferredSize(new java.awt.Dimension(200, 20));
         jPanel4.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, 200, 40));
 
         jPanel2.add(jPanel4);
