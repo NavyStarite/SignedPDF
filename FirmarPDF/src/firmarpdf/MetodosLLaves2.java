@@ -52,11 +52,11 @@ import sun.misc.BASE64Encoder;
  *
  * @author Navy
  */
-public class MetodosLLaves {
+public class MetodosLLaves2{
     private KeyPairGenerator generador;
     private KeyPair llaves;
     Signature firma;
-    public MetodosLLaves () throws NoSuchAlgorithmException{
+    public MetodosLLaves2 () throws NoSuchAlgorithmException{
         //generador de la inscia del rsa
         generador = KeyPairGenerator.getInstance("RSA");
         //inicializar la llave
@@ -67,12 +67,12 @@ public class MetodosLLaves {
         firma = Signature.getInstance("SHA1WithRSA");
     }
     
-    public byte[] FirmarDato (byte[] dato) throws NoSuchAlgorithmException, SignatureException{
+    public byte[] FirmarDato (byte[] dato, java.security.PrivateKey privada) throws NoSuchAlgorithmException, SignatureException{
         try {
-            //inicilizamos
-            firma.initSign(llaves.getPrivate());
+            //inicilizamos  llaves.getPrivate()
+            firma.initSign(privada);
         } catch (InvalidKeyException ex) {
-            Logger.getLogger(MetodosLLaves.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MetodosLLaves2.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Firma Invalida", "Error", JOptionPane.ERROR_MESSAGE);
             
@@ -87,6 +87,30 @@ public class MetodosLLaves {
         System.out.println("Firma: " + new BASE64Encoder().encode(firmabytes));
         return firmabytes;
     }
+    
+    
+        public String FirmarDatoS (byte[] dato, java.security.PrivateKey privada) throws NoSuchAlgorithmException, SignatureException{
+        try {
+            //inicilizamos
+            firma.initSign(privada);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(MetodosLLaves2.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Firma Invalida", "Error", JOptionPane.ERROR_MESSAGE);
+            
+        }
+        
+        firma.update(dato);
+        
+        //firmalo
+        byte[] firmabytes = firma.sign();
+        String sign=new BASE64Encoder().encode(firmabytes);
+        //para poder visualizar la firma
+        System.out.println("Firma: " + sign);
+        return sign;
+    }
+    
+    
     public boolean Verificar(byte[] dato, byte[] firmabytes) throws SignatureException{
         boolean verificado = false;
         try {
@@ -100,7 +124,7 @@ public class MetodosLLaves {
             verificado = firma.verify(firmabytes);
             System.out.println(firma.verify(firmabytes));
         } catch (InvalidKeyException ex) {
-            Logger.getLogger(MetodosLLaves.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MetodosLLaves2.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(null, "Archivo Invalido Invalida", "Error", JOptionPane.ERROR_MESSAGE);
         }
         return verificado;

@@ -72,7 +72,6 @@ public class Menu extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(514, 271));
-        setPreferredSize(new java.awt.Dimension(514, 271));
         getContentPane().setLayout(new java.awt.CardLayout());
 
         jPanel1.setLayout(new java.awt.GridLayout(2, 1));
@@ -86,7 +85,7 @@ public class Menu extends javax.swing.JFrame {
 
         jPanel1.add(jPanel2);
 
-        jPanel3.setLayout(new java.awt.GridLayout());
+        jPanel3.setLayout(new java.awt.GridLayout(1, 0));
 
         jButton1.setText("Generar Llaves");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

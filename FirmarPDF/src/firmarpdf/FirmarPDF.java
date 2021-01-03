@@ -61,17 +61,12 @@ public class FirmarPDF {
         
         // Prueba para ver si funcionan los metodos
         boolean valido = false;
-        MetodosLLaves llaves = new MetodosLLaves();
+        MetodosLLaves2 llaves = new MetodosLLaves2();
         byte[] dato = "Robin debe estar pensando en tony".getBytes(); 
         byte[] firmabytes = null;
         
-        try {
-            firmabytes = llaves.FirmarDato(dato);
-            System.out.println("Firmado");
-        } catch (SignatureException ex) {
-            Logger.getLogger(FirmarPDF.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Error en la firma");
-        }
+        //firmabytes = llaves.FirmarDato(dato);
+        System.out.println("Firmado");
         try {
             valido = llaves.Verificar(dato, firmabytes);
             if (valido) {

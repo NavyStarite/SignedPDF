@@ -51,7 +51,7 @@ import java.security.NoSuchAlgorithmException;
 public class NewClass {
     public static void main(String[] args) throws NoSuchAlgorithmException, IOException{
         MetodosLLaves methods = new MetodosLLaves();
-        methods.guardarLlavePrivada();
-        methods.guardarLlavePublica();
+        methods.guardarLlavePrivadaA();
+        methods.guardarLlavePublicaA();
     }
 }
