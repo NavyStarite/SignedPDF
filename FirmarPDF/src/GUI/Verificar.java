@@ -40,17 +40,30 @@ package GUI;
  *                      "?????????????????????????????????????????
 
  */
+import java.util.Base64;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import firmarpdf.MetodosLLaves2;
+import org.apache.commons.lang3.StringUtils;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 public class Verificar extends javax.swing.JFrame {
-
+    
     PdfReader reader;
-    private FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos .key y .pdf", "pdf", "key");
-
+    private FileNameExtensionFilter filterPDF = new FileNameExtensionFilter("Archivos .pdf", "pdf");
+    private FileNameExtensionFilter filterKEY = new FileNameExtensionFilter("Archivos .key", "key");
     public Verificar() {
         initComponents();
     }
@@ -67,14 +80,16 @@ public class Verificar extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
+        jButton4 = new javax.swing.JButton();
+        jPanel6 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
@@ -95,14 +110,6 @@ public class Verificar extends javax.swing.JFrame {
         jLabel2.setText("Sube los archivos que se te piden para verificar la autenticidad de tu pdf.");
         jPanel1.add(jLabel2);
 
-        jButton3.setText("Elegir archivos");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton3);
-
         getContentPane().add(jPanel1);
 
         jPanel2.setMinimumSize(new java.awt.Dimension(514, 270));
@@ -115,8 +122,16 @@ public class Verificar extends javax.swing.JFrame {
         jLabel3.setText("Llave: ");
         jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 64, 271));
 
-        jTextField1.setText("jTextField1");
+        jTextField1.setEditable(false);
         jPanel3.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, 210, 40));
+
+        jButton3.setText("Elegir archivo");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
 
         jPanel2.add(jPanel3);
 
@@ -126,14 +141,23 @@ public class Verificar extends javax.swing.JFrame {
         jLabel4.setText("PDF:");
         jPanel4.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
 
-        jTextField2.setText("jTextField2");
+        jTextField2.setEditable(false);
         jTextField2.setMinimumSize(new java.awt.Dimension(200, 20));
         jTextField2.setPreferredSize(new java.awt.Dimension(200, 20));
         jPanel4.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, 200, 40));
 
+        jButton4.setText("Elegir archivo");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, -1, -1));
+
         jPanel2.add(jPanel4);
 
         getContentPane().add(jPanel2);
+        getContentPane().add(jPanel6);
 
         jPanel5.setMinimumSize(new java.awt.Dimension(512, 55));
         jPanel5.setPreferredSize(new java.awt.Dimension(512, 55));
@@ -157,21 +181,49 @@ public class Verificar extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
         try {
-            String ruta = jTextField2.getText();
-            if(ruta!=null){
-            reader = new PdfReader(ruta);
-
-            // pageNumber = 1
-            String textFromPage = PdfTextExtractor.getTextFromPage(reader, 1);
-
-            System.out.println(textFromPage);
-
-            reader.close();
+            MetodosLLaves2 method = new MetodosLLaves2();
+            Signature firmaSignature = Signature.getInstance("SHA1WithRSA");
+            String rutaKEY = jTextField1.getText();
+            String rutaPDF = jTextField2.getText();
+            PublicKey key = null;
+            if(rutaPDF!=null&&rutaKEY!=null){
+                ObjectInputStream objStream = new ObjectInputStream(new FileInputStream(rutaKEY));
+                reader = new PdfReader(rutaPDF);
+                try {
+                    key =(PublicKey) objStream.readObject();
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(Verificar.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                // pageNumber = 1
+                String textFromPage = PdfTextExtractor.getTextFromPage(reader, 1);
+                reader.close();
+                objStream.close();
+                System.out.println("LLave: "+key.toString());
+                System.out.println(textFromPage);
+                String firma;
+                String mensaje;
+                firma = StringUtils.substringBetween(textFromPage, "Firma:\n", "\nNombre:");
+                firma = firma.trim();
+                byte[] decoded = new BASE64Decoder().decodeBuffer(firma);
+                mensaje = StringUtils.substringBetween(textFromPage, "Mensaje:\n", "FIN");
+                mensaje = mensaje.trim();
+                System.out.println("Firma: "+firma+"\n"+"MEnsaje: "+mensaje);
+                
+                if (method.Verificar(mensaje.getBytes(), decoded, key, firmaSignature)) {
+                    JOptionPane.showMessageDialog(null, "Archivo Valido", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                }
+                //reader.close();
+                //objStream.close();
             }else{
-                JOptionPane.showMessageDialog(null, "Porfavor ingresa el pdf");
+                JOptionPane.showMessageDialog(null, "Porfavor ingresa tanto el pdf como el archivo key");
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+             ex.printStackTrace();
+        } catch (SignatureException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(Verificar.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -179,7 +231,27 @@ public class Verificar extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         try {
             JFileChooser filechoose = new JFileChooser();
-            filechoose.setFileFilter(filter);
+            filechoose.setFileFilter(filterKEY);
+            int opcion = filechoose.showOpenDialog(this);
+
+            if (opcion == JFileChooser.APPROVE_OPTION) {
+                
+                //Obtener ruta
+                String ruta = filechoose.getSelectedFile().getPath();
+                jTextField1.setText(ruta);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        try {
+            JFileChooser filechoose = new JFileChooser();
+            filechoose.setFileFilter(filterPDF);
             int opcion = filechoose.showOpenDialog(this);
 
             if (opcion == JFileChooser.APPROVE_OPTION) {
@@ -194,9 +266,7 @@ public class Verificar extends javax.swing.JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -237,6 +307,7 @@ public class Verificar extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -246,6 +317,7 @@ public class Verificar extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables

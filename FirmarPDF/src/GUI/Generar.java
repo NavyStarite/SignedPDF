@@ -59,12 +59,15 @@ public class Generar extends javax.swing.JFrame {
 
     JFileChooser seleccionar = new JFileChooser();
     File archivo;
+    ObjectOutputStream obj;
     FileInputStream entrada;
     FileOutputStream salida;
     Document doc;
-
+    MetodosLLaves llaves;
+    MetodosLLaves2 llaves2;
     public Generar() throws NoSuchAlgorithmException {
-        MetodosLLaves llaves = new MetodosLLaves();
+        llaves = new MetodosLLaves();
+        llaves2 = new MetodosLLaves2();
         initComponents();
 
     }
@@ -72,11 +75,16 @@ public class Generar extends javax.swing.JFrame {
     public String GuardarArchivo(File Archivo, java.security.PublicKey publica) {
         String mensaje = "";
         try {
-            salida = new FileOutputStream(archivo);
+            obj = new ObjectOutputStream (new FileOutputStream(archivo));
+            obj.writeObject(publica);
+            obj.close();
+            mensaje = "Archivos Keys Guardado";
+            /*salida = new FileOutputStream(archivo);
             byte[] key = publica.getEncoded();
             salida.write(key);
             salida.close();
             mensaje = "Archivos Keys Guardado";
+            */
         } catch (Exception e) {
             System.out.println("[Error]: " + e);
         }
@@ -134,7 +142,8 @@ public class Generar extends javax.swing.JFrame {
         jLabel3.setText("Nombre");
         jPanel4.add(jLabel3);
 
-        jTextField1.setText("jTextField1");
+        jTextField1.setMinimumSize(new java.awt.Dimension(100, 50));
+        jTextField1.setPreferredSize(new java.awt.Dimension(100, 50));
         jPanel4.add(jTextField1);
 
         jPanel3.add(jPanel4);
@@ -142,7 +151,8 @@ public class Generar extends javax.swing.JFrame {
         jLabel4.setText("Edad");
         jPanel5.add(jLabel4);
 
-        jTextField2.setText("jTextField2");
+        jTextField2.setMinimumSize(new java.awt.Dimension(100, 50));
+        jTextField2.setPreferredSize(new java.awt.Dimension(100, 50));
         jPanel5.add(jTextField2);
 
         jPanel3.add(jPanel5);
@@ -150,7 +160,8 @@ public class Generar extends javax.swing.JFrame {
         jLabel5.setText("Mensaje");
         jPanel6.add(jLabel5);
 
-        jTextField3.setText("jTextField3");
+        jTextField3.setMinimumSize(new java.awt.Dimension(100, 50));
+        jTextField3.setPreferredSize(new java.awt.Dimension(100, 50));
         jPanel6.add(jTextField3);
 
         jPanel3.add(jPanel6);
@@ -158,8 +169,14 @@ public class Generar extends javax.swing.JFrame {
         jLabel6.setText("Firma");
         jPanel7.add(jLabel6);
 
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(200, 60));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 60));
+        jScrollPane1.setRequestFocusEnabled(false);
+
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
+        jTextArea1.setMinimumSize(new java.awt.Dimension(164, 50));
+        jTextArea1.setPreferredSize(new java.awt.Dimension(164, 50));
         jScrollPane1.setViewportView(jTextArea1);
 
         jPanel7.add(jScrollPane1);
@@ -197,10 +214,10 @@ public class Generar extends javax.swing.JFrame {
 
             String nombre = jTextField1.getText();
             String edad = jTextField2.getText();
-            String mensaje = jTextField3.getText();
+            String mensaje = jTextField3.getText().trim();
 
-            MetodosLLaves llaves = new MetodosLLaves();
-            MetodosLLaves2 llaves2 = new MetodosLLaves2();
+            
+            //llaves2 = new MetodosLLaves2();
             //llaves.MetodosLLaves();
             llaves.MetodosLLaves();
             //llaves.guardarLlavePublica(llaves.MetodosLLaves().getPublic());
@@ -213,6 +230,7 @@ public class Generar extends javax.swing.JFrame {
                 if (archivo.getName().endsWith("pdf")) {
                     //String msjkeys = GuardarArchivo(archivo, llaves.MetodosLLaves().getPublic());
                     try {
+                        //llaves.guardarLlavePublica(llaves.MetodosLLaves().getPublic());
                         salida = new FileOutputStream(seleccionar.getSelectedFile());
                         doc = new Document();
                         PdfWriter.getInstance(doc, salida);
@@ -222,14 +240,14 @@ public class Generar extends javax.swing.JFrame {
                         f.setSize(15);
                         Paragraph paragraph = new Paragraph();
                         paragraph.add(new Paragraph("Firma:", f));
-                        paragraph.add("\n" + firma+ "\n");
+                        paragraph.add(firma.trim());
                         paragraph.add(new Paragraph("Nombre:", f));
-                        paragraph.add( "\n" + nombre + "\n");
+                        paragraph.add(nombre);
                         paragraph.add(new Paragraph("Edad:", f));
-                        paragraph.add("\n" + edad + " años" + "\n");
+                        paragraph.add(edad);
                         paragraph.add(new Paragraph("Mensaje:", f));
-                        paragraph.add("\n" + mensaje);
-                        
+                        paragraph.add(mensaje);
+                        paragraph.add(new Paragraph("FIN", f));
                         doc.add(paragraph);
                         doc.close();
                         salida.close();
@@ -264,7 +282,7 @@ public class Generar extends javax.swing.JFrame {
             if (archivo.getName().endsWith(".key")) {
 
                 try {
-                    MetodosLLaves llaves = new MetodosLLaves();
+                    
                     String msjkeys;
                     msjkeys = GuardarArchivo(archivo, llaves.MetodosLLaves().getPublic());
 

@@ -104,7 +104,7 @@ public class MetodosLLaves2{
         
         //firmalo
         byte[] firmabytes = firma.sign();
-        String sign=new BASE64Encoder().encode(firmabytes);
+        String sign=new BASE64Encoder().encodeBuffer(firmabytes);
         //para poder visualizar la firma
         System.out.println("Firma: " + sign);
         return sign;
@@ -129,5 +129,22 @@ public class MetodosLLaves2{
         }
         return verificado;
     }
-    
+    public boolean Verificar(byte[] dato, byte[] firmabytes, java.security.PublicKey pubKey, java.security.Signature firma) throws SignatureException{
+        boolean verificado = false;
+        try {
+            
+            firma.initVerify(pubKey);
+            //volvemos a actualizar el documento
+            firma.update(dato);
+            //el paso para verificarla
+            //firma.initVerify(pubKey);
+            //verifico
+            verificado = firma.verify(firmabytes);
+            System.out.println(firma.verify(firmabytes));
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(MetodosLLaves2.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Archivo Invalido", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return verificado;
+    }
 }
