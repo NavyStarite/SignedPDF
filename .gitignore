@@ -1,3 +1,4 @@
 /FirmarPDF/build/
 *.key
 /FirmarPDF/dist/
+*.pdf
