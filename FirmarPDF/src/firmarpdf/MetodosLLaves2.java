@@ -1,7 +1,5 @@
 package firmarpdf;
 
-
-
 /*
  *                                                     ????
  *                                                   ,??????
@@ -43,83 +41,87 @@ package firmarpdf;
  *                      "?????????????????????????????????????????
 
  */
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import sun.misc.BASE64Encoder;
+
 /**
  *
  * @author Navy
  */
-public class MetodosLLaves2{
+public class MetodosLLaves2 {
+
     private KeyPairGenerator generador;
     private KeyPair llaves;
     Signature firma;
-    public MetodosLLaves2 () throws NoSuchAlgorithmException{
+    byte[] firmabytes;
+
+    public MetodosLLaves2() throws NoSuchAlgorithmException {
         //generador de la inscia del rsa
         generador = KeyPairGenerator.getInstance("RSA");
         //inicializar la llave
         generador.initialize(2048);
         ////creamos las llaves
         llaves = generador.genKeyPair();
-        
+
         firma = Signature.getInstance("SHA1WithRSA");
+
     }
-    
-    public byte[] FirmarDato (byte[] dato, java.security.PrivateKey privada) throws NoSuchAlgorithmException, SignatureException{
-        try {
-            //inicilizamos  llaves.getPrivate()
-            firma.initSign(privada);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(MetodosLLaves2.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Firma Invalida", "Error", JOptionPane.ERROR_MESSAGE);
-            
-        }
-        
-        firma.update(dato);
-        
-        //firmalo
-        byte[] firmabytes = firma.sign();
-        
-        //para poder visualizar la firma
-        System.out.println("Firma: " + new BASE64Encoder().encode(firmabytes));
-        return firmabytes;
-    }
-    
-    
-        public String FirmarDatoS (byte[] dato, java.security.PrivateKey privada) throws NoSuchAlgorithmException, SignatureException{
-        try {
-            //inicilizamos
-            firma.initSign(privada);
-        } catch (InvalidKeyException ex) {
-            Logger.getLogger(MetodosLLaves2.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Firma Invalida", "Error", JOptionPane.ERROR_MESSAGE);
-            
-        }
-        
-        firma.update(dato);
-        
-        //firmalo
-        byte[] firmabytes = firma.sign();
-        String sign=new BASE64Encoder().encodeBuffer(firmabytes);
-        //para poder visualizar la firma
-        System.out.println("Firma: " + sign);
+
+    public String FirmarArchivo(String rutapdf,  String rutaclave) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, IOException, InvalidKeySpecException {
+        byte[] data = leerArchivo(rutapdf);
+        FileInputStream fis = new FileInputStream(rutaclave);
+        int numBytes = fis.available();
+        byte[] bytes = new byte[numBytes];
+        fis.read(bytes);
+        fis.close();
+        KeyFactory keyfactor = KeyFactory.getInstance("RSA");
+        KeySpec keyspec = new PKCS8EncodedKeySpec(bytes);
+        PrivateKey llaveparaBytes = keyfactor.generatePrivate(keyspec);
+        Signature dsa = Signature.getInstance("SHA1withRSA");
+        dsa.initSign(llaveparaBytes);
+        dsa.update(data);
+        byte[] firma = dsa.sign();
+        String sign = new BASE64Encoder().encode(firma);
         return sign;
     }
-    
-    
-    public boolean Verificar(byte[] dato, byte[] firmabytes) throws SignatureException{
+
+    public String FirmarDatoS(byte[] dato, java.security.PrivateKey privada) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
+
+        //inicilizamos
+        firma.initSign(privada);
+
+        firma.update(dato);
+
+        //firmalo
+        byte[] firmabytes = firma.sign();
+        String sign = new BASE64Encoder().encode(firmabytes);
+        //para poder visualizar la firma
+        System.out.println("Firma: " + sign + "\n" + firmabytes);
+        return sign;
+
+    }
+
+    public boolean Verificar(byte[] dato/*, byte[] firmabytes*/) throws SignatureException {
         boolean verificado = false;
         try {
             //el paso para verificarla
             firma.initVerify(llaves.getPublic());
-            
+
             //volvemos a actualizar el documento
             firma.update(dato);
-            
+
             //verifico
             verificado = firma.verify(firmabytes);
             System.out.println(firma.verify(firmabytes));
@@ -129,10 +131,11 @@ public class MetodosLLaves2{
         }
         return verificado;
     }
-    public boolean Verificar(byte[] dato, byte[] firmabytes, java.security.PublicKey pubKey, java.security.Signature firma) throws SignatureException{
+
+    public boolean Verificar(byte[] dato, byte[] firmabytes, java.security.PublicKey pubKey, java.security.Signature firma) throws SignatureException {
         boolean verificado = false;
         try {
-            
+
             firma.initVerify(pubKey);
             //volvemos a actualizar el documento
             firma.update(dato);
@@ -147,4 +150,33 @@ public class MetodosLLaves2{
         }
         return verificado;
     }
+    
+    
+        public boolean Verific(String rutapdf,  String rutaclave, byte[] firma) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, IOException, InvalidKeySpecException {
+        byte[] data = leerArchivo(rutapdf);
+        //byte[] firma = leerArchivo(rutafirma);
+        FileInputStream fis = new FileInputStream(rutaclave);
+        int numBytes = fis.available();
+        byte[] bytes = new byte[numBytes];
+        fis.read(bytes);
+        fis.close();
+        KeyFactory keyfactor = KeyFactory.getInstance("RSA");
+        KeySpec keyspec = new X509EncodedKeySpec(bytes);
+        PublicKey llaveparaBytes = keyfactor.generatePublic(keyspec);
+        Signature dsa = Signature.getInstance("SHA1withRSA");
+        dsa.initVerify(llaveparaBytes);
+        dsa.update(data);
+        boolean verificado;
+        verificado = dsa.verify(firma);
+        
+        return verificado;
+    }
+    
+
+    private byte[] leerArchivo(String ruta) throws IOException {
+
+        return Files.readAllBytes(Paths.get(ruta));
+
+    }
+
 }

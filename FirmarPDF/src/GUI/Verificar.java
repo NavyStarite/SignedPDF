@@ -48,10 +48,12 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -62,6 +64,7 @@ import sun.misc.BASE64Encoder;
 public class Verificar extends javax.swing.JFrame {
     
     PdfReader reader;
+    
     private FileNameExtensionFilter filterPDF = new FileNameExtensionFilter("Archivos .pdf", "pdf");
     private FileNameExtensionFilter filterKEY = new FileNameExtensionFilter("Archivos .key", "key");
     public Verificar() {
@@ -187,29 +190,31 @@ public class Verificar extends javax.swing.JFrame {
             String rutaPDF = jTextField2.getText();
             PublicKey key = null;
             if(rutaPDF!=null&&rutaKEY!=null){
-                ObjectInputStream objStream = new ObjectInputStream(new FileInputStream(rutaKEY));
+                //ObjectInputStream objStream = new ObjectInputStream(new FileInputStream(rutaKEY));
                 reader = new PdfReader(rutaPDF);
-                try {
+                /*try {
                     key =(PublicKey) objStream.readObject();
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(Verificar.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }*/
                 // pageNumber = 1
                 String textFromPage = PdfTextExtractor.getTextFromPage(reader, 1);
                 reader.close();
-                objStream.close();
-                System.out.println("LLave: "+key.toString());
-                System.out.println(textFromPage);
+                //objStream.close();
+                //System.out.println("LLave: "+key.toString());
+                //System.out.println(textFromPage);
                 String firma;
                 String mensaje;
-                firma = StringUtils.substringBetween(textFromPage, "Firma:\n", "\nNombre:");
-                firma = firma.trim();
-                byte[] decoded = new BASE64Decoder().decodeBuffer(firma);
-                mensaje = StringUtils.substringBetween(textFromPage, "Mensaje:\n", "FIN");
-                mensaje = mensaje.trim();
-                System.out.println("Firma: "+firma+"\n"+"MEnsaje: "+mensaje);
+                firma = StringUtils.substringBetween(textFromPage, "Firma:\n", "");
+                //firma = firma.trim();//trim
+                firma=firma.replaceAll("\n","");
+                byte[] decoded = new BASE64Decoder().decodeBuffer(firma.trim());
                 
-                if (method.Verificar(mensaje.getBytes(), decoded, key, firmaSignature)) {
+                //mensaje = StringUtils.substringBetween(textFromPage, "Mensaje:\n", "FIN");
+                //mensaje = mensaje.trim();//trim
+               System.out.println("Firma: "+firma+"\n"+"\n"+decoded);
+                
+                if (method.Verific(rutaPDF, rutaKEY, decoded)) {
                     JOptionPane.showMessageDialog(null, "Archivo Valido", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 }
                 //reader.close();
@@ -223,6 +228,10 @@ public class Verificar extends javax.swing.JFrame {
              ex.printStackTrace();
         } catch (SignatureException ex) {
             ex.printStackTrace();
+            Logger.getLogger(Verificar.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(Verificar.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeySpecException ex) {
             Logger.getLogger(Verificar.class.getName()).log(Level.SEVERE, null, ex);
         }
 
