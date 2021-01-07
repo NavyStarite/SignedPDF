@@ -302,6 +302,7 @@ public class Generar extends javax.swing.JFrame {
                     Paragraph paragraph = new Paragraph();
                     paragraph.add(new Paragraph("Firma:", f));
                     paragraph.add(firma);//trim
+                    paragraph.add("\nFin");
                     doc.add(paragraph);
                     doc.close();
                     salida.close();

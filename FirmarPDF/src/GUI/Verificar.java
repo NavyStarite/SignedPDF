@@ -205,7 +205,7 @@ public class Verificar extends javax.swing.JFrame {
                 //System.out.println(textFromPage);
                 String firma;
                 String mensaje;
-                firma = StringUtils.substringBetween(textFromPage, "Firma:\n", "");
+                firma = StringUtils.substringBetween(textFromPage, "Firma:\n", "\nFin");
                 //firma = firma.trim();//trim
                 firma=firma.replaceAll("\n","");
                 byte[] decoded = new BASE64Decoder().decodeBuffer(firma.trim());
@@ -216,6 +216,8 @@ public class Verificar extends javax.swing.JFrame {
                 
                 if (method.Verific(rutaPDF, rutaKEY, decoded)) {
                     JOptionPane.showMessageDialog(null, "Archivo Valido", "Succes", JOptionPane.INFORMATION_MESSAGE);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Archivo Invalido", "Succes", JOptionPane.INFORMATION_MESSAGE);
                 }
                 //reader.close();
                 //objStream.close();
