@@ -106,11 +106,7 @@ public class MetodosLLaves2 {
 
         //firmalo
         byte[] firmabytes = firma.sign();
-<<<<<<< Updated upstream
         String sign = new BASE64Encoder().encode(firmabytes);
-=======
-        String sign=new BASE64Encoder().encodeBuffer(firmabytes);
->>>>>>> Stashed changes
         //para poder visualizar la firma
         System.out.println("Firma: " + sign + "\n" + firmabytes);
         return sign;
@@ -135,18 +131,11 @@ public class MetodosLLaves2 {
         }
         return verificado;
     }
-<<<<<<< Updated upstream
 
     public boolean Verificar(byte[] dato, byte[] firmabytes, java.security.PublicKey pubKey, java.security.Signature firma) throws SignatureException {
         boolean verificado = false;
         try {
 
-=======
-    public boolean Verificar(byte[] dato, byte[] firmabytes, java.security.PublicKey pubKey, java.security.Signature firma) throws SignatureException{
-        boolean verificado = false;
-        try {
-            
->>>>>>> Stashed changes
             firma.initVerify(pubKey);
             //volvemos a actualizar el documento
             firma.update(dato);
@@ -161,7 +150,6 @@ public class MetodosLLaves2 {
         }
         return verificado;
     }
-<<<<<<< Updated upstream
     
     
         public boolean Verific(String rutapdf,  String rutaclave, byte[] firma) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException, IOException, InvalidKeySpecException {
@@ -191,6 +179,4 @@ public class MetodosLLaves2 {
 
     }
 
-=======
->>>>>>> Stashed changes
 }
