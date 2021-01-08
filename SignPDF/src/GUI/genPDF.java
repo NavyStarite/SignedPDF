@@ -23,13 +23,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import variables.ipPort;
 
 /**
  *
  * @author Escuela
  */
 public class genPDF extends javax.swing.JFrame {
-    
+    private ipPort conexion = new ipPort();
     private FileNameExtensionFilter filterPDF = new FileNameExtensionFilter("Archivos .pdf", "pdf");
     private FileNameExtensionFilter filterKEY = new FileNameExtensionFilter("Archivos .key", "key");
     /**
@@ -160,7 +161,7 @@ public class genPDF extends javax.swing.JFrame {
             edad = parseInt(jTextField2.getText().trim());
             if (edad<150&&edad>10) {
                 try {
-                    Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
+                    Registry reg = LocateRegistry.getRegistry(conexion.getIp(),conexion.getPort());
                     Interfaz i = (Interfaz)reg.lookup("sign");
                     PrivateKey privKey = i.cargarPrivadaKey(jTextField4.getText());
 

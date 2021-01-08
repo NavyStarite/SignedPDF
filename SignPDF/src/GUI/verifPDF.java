@@ -21,14 +21,16 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import variables.ipPort;
 
 /**
  *
  * @author Escuela
  */
 public class verifPDF extends javax.swing.JFrame {
-private FileNameExtensionFilter filterPDF = new FileNameExtensionFilter("Archivos .pdf", "pdf");
-private FileNameExtensionFilter filterKEY = new FileNameExtensionFilter("Archivos .key", "key");
+    private ipPort conexion = new ipPort();
+    private FileNameExtensionFilter filterPDF = new FileNameExtensionFilter("Archivos .pdf", "pdf");
+    private FileNameExtensionFilter filterKEY = new FileNameExtensionFilter("Archivos .key", "key");
     /**
      * Creates new form verifPDF
      */
@@ -129,7 +131,7 @@ private FileNameExtensionFilter filterKEY = new FileNameExtensionFilter("Archivo
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
-            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
+            Registry reg = LocateRegistry.getRegistry(conexion.getIp(),conexion.getPort());
             Interfaz i = (Interfaz)reg.lookup("sign");
             if (i.verificar(i.getpdfText(jTextField5.getText()), i.cargarPublicaKey(jTextField4.getText()))) {
                 JOptionPane.showMessageDialog(null,"Es un archivo valido.");

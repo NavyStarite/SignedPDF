@@ -18,20 +18,21 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import variables.ipPort;
 
 /**
  *
  * @author Escuela
  */
 public class Menu extends javax.swing.JFrame {
-
+    private ipPort conexion = new ipPort();
     /**
      * Creates new form Menu
      */
     public Menu(){
         this.setTitle("Menu");
         try {
-            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
+            Registry reg = LocateRegistry.getRegistry(conexion.getIp(),conexion.getPort());
             Interfaz i = (Interfaz)reg.lookup("sign");
             i.makeDirectory(new File("Keys"));
             i.makeDirectory(new File("Docs"));
@@ -109,7 +110,7 @@ public class Menu extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
+            Registry reg = LocateRegistry.getRegistry(conexion.getIp(),conexion.getPort());
             Interfaz i = (Interfaz)reg.lookup("sign");
             i.guardarKey(i.getPrivate(), "Keys/privKey");
             JOptionPane.showMessageDialog(null,"Llave privada generada en la carpeta Keys.");
@@ -120,7 +121,7 @@ public class Menu extends javax.swing.JFrame {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            Registry reg = LocateRegistry.getRegistry("127.0.0.1",1099);
+            Registry reg = LocateRegistry.getRegistry(conexion.getIp(),conexion.getPort());
             Interfaz i = (Interfaz)reg.lookup("sign");
             i.guardarKey(i.getPublic(), "Keys/pubKey");
             JOptionPane.showMessageDialog(null,"Llave publica generada en la carpeta Keys.");
