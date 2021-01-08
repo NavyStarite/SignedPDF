@@ -16,6 +16,9 @@ public class ipPort {
     private String iplocal = "127.0.0.1";
     private int portlocal = 1099;
     public ipPort(){
+        //hacer local
+        ip = iplocal;
+        port = portlocal;
     }
     /**
      * @return the ip
