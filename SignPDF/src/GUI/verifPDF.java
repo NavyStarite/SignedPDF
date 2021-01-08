@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -246,4 +247,12 @@ private FileNameExtensionFilter filterKEY = new FileNameExtensionFilter("Archivo
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
+
+    public JButton getM() {
+        return jButton1;
+    }
+
+    public void runNow() {
+        this.setVisible(true);
+    }
 }
